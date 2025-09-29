@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bi-Call Bingo</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+      }
+
+      .header p {
+        font-size: 1.1em;
+        opacity: 0.9;
+      }
+
+      .content {
+        padding: 30px;
+      }
+
+      .section {
+        margin-bottom: 30px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        border-left: 4px solid #667eea;
+      }
+
+      .section h2 {
+        color: #333;
+        margin-bottom: 15px;
+        font-size: 1.5em;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: #555;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: border-color 0.3s;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-danger {
+        background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+      }
+
+      .btn-danger:hover {
+        box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+      }
+
+      .dev-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .dev-card {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        border: 2px solid #e9ecef;
+        text-align: center;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .dev-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .dev-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+      }
+
+      .dev-count {
+        font-size: 2em;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 10px;
+      }
+
+      .count-btn {
+        background: #28a745;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.2s;
+      }
+
+      .count-btn:hover {
+        background: #218838;
+      }
+
+      .winner {
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        border: 2px solid #ffc107;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .winner .dev-name {
+        color: #b8860b;
+      }
+
+      .winner .dev-count {
+        color: #b8860b;
+      }
+
+      .stats {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        padding: 15px;
+        background: #e9ecef;
+        border-radius: 8px;
+      }
+
+      .stat-item {
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: #667eea;
+      }
+
+      .stat-label {
+        color: #666;
+        font-size: 0.9em;
+      }
+
+      .reset-info {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 15px;
+        font-size: 0.9em;
+      }
+
+      .empty-state {
+        text-align: center;
+        color: #666;
+        font-style: italic;
+        padding: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🎯 Bi-Call Bingo</h1>
+        <p>Track how many times developers call out Bi's name</p>
+      </div>
+
+      <div class="content">
+        <!-- Add Developer Section -->
+        <div class="section">
+          <h2>👨‍💻 Add Developer</h2>
+          <div class="form-group">
+            <label for="devName">Developer Name:</label>
+            <input
+              type="text"
+              id="devName"
+              placeholder="Enter developer name"
+            />
+          </div>
+          <button class="btn" onclick="addDeveloper()">Add Developer</button>
+        </div>
+
+        <!-- PM Name Tracking Section -->
+        <div class="section">
+          <h2>🎯 Bi-Call Count</h2>
+          <div class="form-group">
+            <label for="pmName">PM Name:</label>
+            <input
+              type="text"
+              id="pmName"
+              placeholder="Enter PM name"
+              value="Bi"
+            />
+          </div>
+          <p style="margin-bottom: 15px; color: #666">
+            Click the +1 button next to each developer when they call out Bi's
+            name
+          </p>
+
+          <div id="devList" class="dev-list">
+            <div class="empty-state">
+              No developers added yet. Add some developers to start tracking!
+            </div>
+          </div>
+
+          <div class="stats">
+            <div class="stat-item">
+              <div class="stat-value" id="totalCalls">0</div>
+              <div class="stat-label">Total Calls</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="activeDevs">0</div>
+              <div class="stat-label">Active Devs</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="topCaller">-</div>
+              <div class="stat-label">Top Caller</div>
+            </div>
+          </div>
+
+          <button
+            class="btn btn-danger"
+            onclick="resetDay()"
+            style="margin-top: 15px"
+          >
+            Reset Day
+          </button>
+          <div class="reset-info">
+            💡 Data automatically resets at midnight. You can also manually
+            reset anytime.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Data storage
+      let developers = [];
+      let lastResetDate = null;
+
+      // Initialize the app
+      function init() {
+        loadData();
+        checkDailyReset();
+        updateDisplay();
+      }
+
+      // Load data from localStorage
+      function loadData() {
+        const savedData = localStorage.getItem("pmTrackerData");
+        const savedResetDate = localStorage.getItem("pmTrackerResetDate");
+
+        if (savedData) {
+          developers = JSON.parse(savedData);
+        }
+
+        if (savedResetDate) {
+          lastResetDate = new Date(savedResetDate);
+        } else {
+          lastResetDate = new Date();
+          localStorage.setItem(
+            "pmTrackerResetDate",
+            lastResetDate.toISOString()
+          );
+        }
+      }
+
+      // Save data to localStorage
+      function saveData() {
+        localStorage.setItem("pmTrackerData", JSON.stringify(developers));
+        localStorage.setItem("pmTrackerResetDate", lastResetDate.toISOString());
+      }
+
+      // Check if we need to reset for a new day
+      function checkDailyReset() {
+        const today = new Date();
+        const lastReset = new Date(lastResetDate);
+
+        // Check if it's a new day (different date)
+        if (today.toDateString() !== lastReset.toDateString()) {
+          resetDay();
+        }
+      }
+
+      // Add a new developer
+      function addDeveloper() {
+        const devNameInput = document.getElementById("devName");
+        const name = devNameInput.value.trim();
+
+        if (!name) {
+          alert("Please enter a developer name");
+          return;
+        }
+
+        // Check if developer already exists
+        if (
+          developers.find(
+            (dev) => dev.name.toLowerCase() === name.toLowerCase()
+          )
+        ) {
+          alert("Developer already exists!");
+          return;
+        }
+
+        developers.push({
+          name: name,
+          count: 0,
+        });
+
+        devNameInput.value = "";
+        saveData();
+        updateDisplay();
+      }
+
+      // Increment count for a developer
+      function incrementCount(index) {
+        developers[index].count++;
+        saveData();
+        updateDisplay();
+      }
+
+      // Reset the day
+      function resetDay() {
+        developers.forEach((dev) => (dev.count = 0));
+        lastResetDate = new Date();
+        saveData();
+        updateDisplay();
+        alert("Day reset! All counts have been cleared.");
+      }
+
+      // Update the display
+      function updateDisplay() {
+        const devListElement = document.getElementById("devList");
+        const totalCallsElement = document.getElementById("totalCalls");
+        const activeDevsElement = document.getElementById("activeDevs");
+        const topCallerElement = document.getElementById("topCaller");
+
+        // Clear the dev list
+        devListElement.innerHTML = "";
+
+        if (developers.length === 0) {
+          devListElement.innerHTML =
+            '<div class="empty-state">No developers added yet. Add some developers to start tracking!</div>';
+        } else {
+          // Sort developers by count (highest first)
+          const sortedDevs = [...developers].sort((a, b) => b.count - a.count);
+
+          sortedDevs.forEach((dev, index) => {
+            const devCard = document.createElement("div");
+            devCard.className = "dev-card";
+
+            // Add winner class to the top caller
+            if (index === 0 && dev.count > 0) {
+              devCard.classList.add("winner");
+            }
+
+            devCard.innerHTML = `
+                        <div class="dev-name">${dev.name}</div>
+                        <div class="dev-count">${dev.count}</div>
+                        <button class="count-btn" onclick="incrementCount(${developers.findIndex(
+                          (d) => d.name === dev.name
+                        )})">+1</button>
+                    `;
+
+            devListElement.appendChild(devCard);
+          });
+        }
+
+        // Update stats
+        const totalCalls = developers.reduce((sum, dev) => sum + dev.count, 0);
+        const activeDevs = developers.filter((dev) => dev.count > 0).length;
+        const topCaller =
+          developers.length > 0
+            ? developers.reduce(
+                (max, dev) => (dev.count > max.count ? dev : max),
+                developers[0]
+              )
+            : null;
+
+        totalCallsElement.textContent = totalCalls;
+        activeDevsElement.textContent = activeDevs;
+        topCallerElement.textContent =
+          topCaller && topCaller.count > 0 ? topCaller.name : "-";
+      }
+
+      // Initialize the app when the page loads
+      document.addEventListener("DOMContentLoaded", init);
+    </script>
+  </body>
+</html>
